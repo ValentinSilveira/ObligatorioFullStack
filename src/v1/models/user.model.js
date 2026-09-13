@@ -19,6 +19,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         select: false
+    },
+    rol: {
+        type: String,
+        required: true,
+    },
+    plan: {
+        type: String,
+        enum: ["plus", "premium"],
+        required: true,
     }
 });
 
