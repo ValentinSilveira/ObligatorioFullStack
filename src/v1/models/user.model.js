@@ -20,14 +20,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         select: false
     },
-    rol: {
-        type: String,
-        required: true,
-    },
     plan: {
         type: String,
-        enum: ["plus", "premium"],
-        required: true,
+        default: "Plus"
     }
 });
 
@@ -39,7 +34,7 @@ userSchema.set('toJSON', {
         //borramos el id de mongo
         delete ret._id;
         delete ret.password;
-        // // eliminar campos que no querés exponer
+        // eliminar campos que no querés exponer
         // 
         delete ret.__v;
         // delete ret.createdAt;

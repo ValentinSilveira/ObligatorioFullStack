@@ -1,31 +1,26 @@
-import { createUserService } from "../services/auth.service.js";
-import { deleteUserService, replaceUserService } from "../services/user.services.js";
+import { deleteUserService, updatePlanService, updateUserService, getUserByIdService } from "../services/user.services.js";
 
-
-
-export const createUserController = async (req, res) => {
-    const data = req.body;
-    const user = await createUserService(data);
+export const getUserController = async (req, res) => {
+    const user = await getUserByIdService(req.user.id);
     return res.status(200).json(user);
-}
-
-export const deleteUserController = async (req, res) => {
-    const { idUser } = req.params;
-    await deleteUserService(idUser);
-    return res.status(204).send();
-}
+};
 
 export const updateUserController = async (req, res) => {
     const data = req.body;
-    const { idUser } = req.params;
-    const user = await updateUserService(idUser, data);
+    const user = await updateUserService(req.user.id, data);
     return res.status(200).json(user);
+};
 
-}
+export const deleteUserController = async (req, res) => {
+    await deleteUserService(req.user.id);
+    return res.status(204).send();
+};
 
-export const replaceUserController = async (req, res) => {
-    const data = req.body;
-    const { idUser } = req.params;
-    const user = await replaceUserService(idUser, data);
-    return res.status(200).json(user);
-}
+export const updatePlanController = async (req, res) => {
+    const { plan } = req.body;
+    const user = await updatePlanService(req.user.id, plan);
+    return res.status(200).json({
+        message: "Plan actualizado con éxito.",
+        user
+    });
+};

@@ -6,9 +6,6 @@ import { generateAccessToken } from "../../utils/token.utils.js";
 export const registerController = async (req, res) => {
     const data = req.body;
     const user = await createUserService(data);
-    if (user) {
-        return res.status(201).json(user);
-    }
 
     const userToken = {
         id: user._id,
@@ -18,7 +15,7 @@ export const registerController = async (req, res) => {
     }
     const token = generateAccessToken(userToken);
     //devolvemos user y token
-    return res.status(200).json({
+    return res.status(201).json({
         user,
         token
     });
