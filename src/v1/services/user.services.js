@@ -25,6 +25,6 @@ export const updateUserService = async (id, data) => {
     return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
-export const replaceUserService = async (id, data) => {
-    return await User.findByIdAndReplace(id, data, { new: true });
-}
+export const updatePlanService = async (id, plan) => {
+    return await User.findByIdAndUpdate(id, { plan }, { new: true });
+};
