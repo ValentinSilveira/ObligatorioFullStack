@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Role, Roles } from "../../constants/role.constants.js";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -23,7 +24,13 @@ const userSchema = new mongoose.Schema({
     plan: {
         type: String,
         default: "Plus"
-    }
+    },
+    role: { 
+        type: String, 
+        enum: Roles, 
+        default: Role.user 
+    },
+
 });
 
 userSchema.set('toJSON', {
