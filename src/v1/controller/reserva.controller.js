@@ -2,7 +2,8 @@ import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva } fro
 
 export const listarReservas = async (req, res) => {
     const reservas = await getAllReservas(req.user.id);
-    return res.status(200).json(reservas);
+    const reservasActivas = reservas.filter(reserva => reserva.estado !== "cancelada");
+    return res.status(200).json(reservasActivas);
 };
 
 export const reservarTurno = async (req, res) => {

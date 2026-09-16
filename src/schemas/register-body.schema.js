@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { Roles } from '../constants/role.constants.js';
 
 //esquema de validacion para body registro
 export const registerBodySchema = Joi.object({
@@ -7,6 +8,10 @@ export const registerBodySchema = Joi.object({
     email: Joi.string().email().lowercase().required(),
     password: Joi.string().min(3).max(30).required(),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
-    rol: Joi.string().required(), //TODO: hacer rol
+    role: Joi.string().valid(...Roles).required(),
     plan: Joi.string().valid("plus", "premium").required()
+})
+
+export const roleSchema = Joi.object({
+    role: Joi.string().valid(...Roles).required()
 })
