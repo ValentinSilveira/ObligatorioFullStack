@@ -1,5 +1,6 @@
 import Reserva from "../models/reserva.model.js";
 import { AppError } from "../../utils/appError.js";
+import { embellishText } from "./embellish-text.service.js"
 
 const asegurarPropietario = (reserva, clienteId) => {
     if (reserva.cliente.toString() !== clienteId.toString()) {
@@ -9,6 +10,11 @@ const asegurarPropietario = (reserva, clienteId) => {
 
 export const crearReserva = async (clienteId, fecha, hora, mascota, nombreMascota, edadMascota, motivo) => {
     try {
+        const motivoProfesional = await embellishText(
+            motivo,
+            "profesional veterinario"
+        );
+
         const nuevaReserva = await Reserva.create({
             cliente: clienteId,
             fecha,
@@ -17,6 +23,7 @@ export const crearReserva = async (clienteId, fecha, hora, mascota, nombreMascot
             nombreMascota,
             edadMascota,
             motivo,
+            motivoProfesional,
             estado: "pendiente"
         });
 
