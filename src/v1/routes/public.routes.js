@@ -3,8 +3,7 @@ import { transformTextController } from "../controller/transform-text.controller
 
 const publicRoutes = Router();
 
-publicRoutes.post("/embellecer", transformTextController);
-// publicRoutes.get("/user-externos", obtenerUsuariosExternosController);
+publicRoutes.post("/embellecer", transformTextController);;
 
 export default publicRoutes
 
