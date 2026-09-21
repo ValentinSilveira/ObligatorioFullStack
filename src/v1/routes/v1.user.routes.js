@@ -3,13 +3,14 @@ import { getUserController, updateUserController, deleteUserController, updatePl
 import { authMiddleware } from "../../middleware/auth.middleware.js";
 import { validateRequest } from "../../middleware/validate.middleware.js";
 import { planBodySchema } from "../../schemas/plan-body.schema.js";
+import { updateUserBodySchema } from "../../schemas/update-user-body.schema.js";
 
 const userRoutes = Router();
 
 userRoutes.use(authMiddleware);
 
 userRoutes.get("/", getUserController);
-userRoutes.patch("/", updateUserController);
+userRoutes.patch("/", validateRequest(updateUserBodySchema, "body"), updateUserController);
 userRoutes.delete("/", deleteUserController);
 //TODO: VER SI LO USAMOS 
 

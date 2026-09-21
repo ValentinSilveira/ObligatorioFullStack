@@ -1,12 +1,15 @@
 import User from "../models/user.model.js";
+import { AppError } from "../../utils/appError.js";
 
-
-export const getAllUsersService = async () => {
-    return await User.find();
-};
 
 export const getUserByIdService = async (id) => {
-    return await User.findById(id).select("+password");
+    const user = await User.findById(id);
+
+    if (!user) {
+        throw new AppError(404, "El usuario no existe.");
+    }
+
+    return user;
 };
 
 export const getUserByEmail = async (data) => {
@@ -18,13 +21,38 @@ export const getUserByUsername = async (data) => {
 }
 
 export const deleteUserService = async (id) => {
-    return await User.findByIdAndDelete(id);
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+        throw new AppError(404, "El usuario no existe.");
+    }
+
+    return user;
 };
 
 export const updateUserService = async (id, data) => {
-    return await User.findByIdAndUpdate(id, data, { new: true });
+    try {
+        const user = await User.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+
+        if (!user) {
+            throw new AppError(404, "El usuario no existe.");
+        }
+
+        return user;
+    } catch (error) {
+        if (error.code === 11000) {
+            throw new AppError(409, "Ese username o email ya está en uso.");
+        }
+        throw error;
+    }
 };
 
 export const updatePlanService = async (id, plan) => {
-    return await User.findByIdAndUpdate(id, { plan }, { new: true });
+    const user = await User.findByIdAndUpdate(id, { plan }, { new: true, runValidators: true });
+
+    if (!user) {
+        throw new AppError(404, "El usuario no existe.");
+    }
+
+    return user;
 };
