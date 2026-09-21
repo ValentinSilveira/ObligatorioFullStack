@@ -6,10 +6,16 @@ export const mensajesJoi = {
     'string.max': '{{#label}} debe tener como máximo {{#limit}} caracteres',
     'string.email': '{{#label}} debe tener un formato válido',
     'string.pattern.base': '{{#label}} tiene un formato inválido',
+    'string.hex': '{{#label}} debe ser un identificador válido',
+    'string.length': '{{#label}} debe tener {{#limit}} caracteres',
     'number.base': '{{#label}} debe ser un número',
     'number.integer': '{{#label}} debe ser un número entero',
     'number.min': '{{#label}} debe ser mayor o igual a {{#limit}}',
     'number.max': '{{#label}} debe ser menor o igual a {{#limit}}',
     'date.base': '{{#label}} debe ser una fecha válida',
-    'date.format': '{{#label}} debe tener formato de fecha ISO (AAAA-MM-DD)'
+    'date.format': '{{#label}} debe tener formato de fecha ISO (AAAA-MM-DD)',
+    'reserva.horarioInvalido': 'La fecha y hora de la reserva deben ser al menos 30 minutos posteriores al momento actual',
+    'reserva.horaFueraDeRango': 'La hora debe estar entre las 09:00 y las 18:30',
+    'reserva.fechaInvalida': 'La fecha ingresada no existe',
+    'object.min': 'Debe enviar al menos un campo para actualizar'
 };
