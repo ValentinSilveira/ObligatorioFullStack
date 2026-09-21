@@ -12,7 +12,10 @@ userRoutes.use(authMiddleware);
 userRoutes.get("/", getUserController);
 userRoutes.patch("/", validateRequest(updateUserBodySchema, "body"), updateUserController);
 userRoutes.delete("/", deleteUserController);
+//TODO: VER SI LO USAMOS 
 
 userRoutes.patch("/plan", validateRequest(planBodySchema, "body"), updatePlanController);
 
 export default userRoutes
+
+

@@ -1,6 +1,7 @@
 import Reserva from "../models/reserva.model.js";
 import Categoria from "../models/categoria.model.js";
 import { AppError } from "../../utils/appError.js";
+import { embellishText } from "./embellish-text.service.js"
 
 const MARGEN_ENTRE_RESERVAS_MS = 30 * 60 * 1000;
 
@@ -50,6 +51,11 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
         await asegurarCategoriaExistente(categoriaId);
         await asegurarDistanciaMinima(fecha, hora);
 
+        const motivoProfesional = await embellishText(
+            motivo,
+            "profesional veterinario"
+        );
+
         const nuevaReserva = await Reserva.create({
             cliente: clienteId,
             categoriaId,
@@ -59,7 +65,8 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
             nombreMascota,
             edadMascota,
             motivo,
-            estado: "confirmada"
+            motivoProfesional,
+            estado: "pendiente"
         });
         return nuevaReserva;
     } catch (error) {
