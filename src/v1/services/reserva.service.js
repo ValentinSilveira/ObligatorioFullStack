@@ -121,3 +121,14 @@ export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nueva
     }
     return reserva;
 };
+
+export const obtenerReservaPorId = async (idReserva, clienteId) => {
+    const reserva = await Reserva.findById(idReserva);
+
+    if(!reserva){
+        throw new AppError(404, "La reserva no existe");
+    }
+
+    asegurarPropietario(reserva , clienteId);
+    return reserva;
+};
