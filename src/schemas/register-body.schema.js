@@ -8,7 +8,6 @@ export const registerBodySchema = Joi.object({
     email: Joi.string().email().lowercase().required(),
     password: Joi.string().min(3).max(30).required(),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
-    role: Joi.string().valid(...Roles).required(),
     plan: Joi.string().valid("plus", "premium").required()
 })
 

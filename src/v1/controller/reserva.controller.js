@@ -1,10 +1,9 @@
 import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva } from "../services/reserva.service.js";
 
-// listamos reservas activas del usuario
+// listamos las reservas del usuario
 export const listarReservas = async (req, res) => {
     const reservas = await getAllReservas(req.user.id);
-    const reservasActivas = reservas.filter(reserva => reserva.estado !== "cancelada");
-    return res.status(200).json(reservasActivas);
+    return res.status(200).json(reservas);
 };
 
 // reservamos un turno para el usuario autenticado

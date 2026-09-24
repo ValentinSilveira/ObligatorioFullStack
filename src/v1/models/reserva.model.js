@@ -41,33 +41,23 @@ const reservaSchema = new mongoose.Schema({
     },
     estado: {
         type: String,
-        enum: ["pendiente", "confirmada", "cancelada"],
+        enum: ["pendiente", "confirmada"],
         default: "confirmada",
     },
-    activa: {
-        type: Boolean,
-        default: true,
-    }
 });
 
-// Antes de guardar, actualizo el campo "activa" según el estado de la reserva
-reservaSchema.pre("save", function () {
-    this.activa = this.estado !== "cancelada";
-});
-
-// Creo un índice único compuesto para fecha y hora, pero solo para reservas activas
+// Índice único compuesto para fecha y hora: al cancelar/borrar una reserva se elimina
+// el documento, así que no hace falta filtro parcial, cualquier reserva que exista está vigente.
 reservaSchema.index(
     { fecha: 1, hora: 1 },
-    { unique: true, partialFilterExpression: { activa: true } }
+    { unique: true }
 );
-
 
 reservaSchema.set('toJSON', {
     transform: (doc, ret) => {
         ret.id = ret._id;
         delete ret._id;
         delete ret.__v;
-        delete ret.activa;
         return ret;
     }
 });

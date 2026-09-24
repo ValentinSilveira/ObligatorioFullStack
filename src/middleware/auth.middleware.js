@@ -2,6 +2,8 @@ import { loginBodySchema } from "../schemas/login-body.schema.js";
 import { registerBodySchema } from "../schemas/register-body.schema.js";
 import { verifyAccessToken } from "../utils/token.utils.js";
 import { validateRequest } from "./validate.middleware.js";
+import { AppError } from "../utils/appError.js";
+import { getUserByIdService } from "../v1/services/user.services.js";
 
 export const middlewareValidateRegisterBody = validateRequest(registerBodySchema, "body");
 export const middlewareValidateLoginBody = validateRequest(loginBodySchema, "body");
@@ -33,3 +35,21 @@ export const authMiddleware = (req, res, next) => {
         return res.status(401).json({ error: "Token inválido." });
     }
 }
+
+
+// Middleware para restringir rutas a ciertos roles (ej: solo admin).
+// Consulta el rol actual en la base (no confía en el rol que pueda venir en el token),
+// así se respeta cualquier cambio de rol posterior al login.
+export const requireRole = (...rolesPermitidos) => async (req, res, next) => {
+    try {
+        const user = await getUserByIdService(req.user.id);
+
+        if (!rolesPermitidos.includes(user.role)) {
+            throw new AppError(403, "No tenés permisos para realizar esta acción.");
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+};

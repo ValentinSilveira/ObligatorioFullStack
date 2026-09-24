@@ -1,4 +1,4 @@
-import { constructorError } from "../../utils/contructorError.js";
+import { AppError } from "../../utils/appError.js";
 import { compararPassword, hashear } from "../../utils/validar-password.utils.js";
 import User from "../models/user.model.js";
 import { getUserByEmail, getUserByUsername } from "./user.services.js";
@@ -15,29 +15,36 @@ export const getUserByEmailOrUsername = async (data) => {
 
 //data es un usuario completo
 export const createUserService = async (data) => {
-    //TODO: hay que validar que no existe un usuario con email ni username
-
-
     const email = data.email;
     const userPorEmail = await getUserByEmail(email);
     if (userPorEmail) {
-        //TODO:  usar el constructor de errores
-        throw new Error("Error el mail ya existe");
+        throw new AppError(409, "Ese email ya está en uso.");
     }
     const username = data.username;
     const userPorUsername = await getUserByUsername(username);
     if (userPorUsername) {
-        //TODO usar el constructor de errores
-        throw new Error("Error el usuario ya existe");
+        throw new AppError(409, "Ese username ya está en uso.");
     }
 
+    // Se arma el objeto explícitamente para que un registro
+    // nunca pueda colarse con un "role" propio: siempre queda el default ("user") del modelo.
     const userData = {
-        ...data,
+        name: data.name,
+        username: data.username,
+        email: data.email,
+        plan: data.plan,
         password: await hashear(data.password)
     };
 
-    const user = await User.create(userData);
-    return user;
+    try {
+        const user = await User.create(userData);
+        return user;
+    } catch (error) {
+        if (error.code === 11000) {
+            throw new AppError(409, "Ese email o username ya está en uso.");
+        }
+        throw error;
+    }
 }
 
 export const registerService = async (reqBody) => {
@@ -45,7 +52,7 @@ export const registerService = async (reqBody) => {
 }
 
 export const loginService = async (reqBody) => {
-    const errorCredencialInvalida = constructorError("Credenciales invalidas", 401);
+    const errorCredencialInvalida = new AppError(401, "Credenciales invalidas");
 
     if (!reqBody) {
         throw errorCredencialInvalida;
