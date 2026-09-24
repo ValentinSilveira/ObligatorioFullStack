@@ -25,10 +25,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "Plus"
     },
-    role: { 
-        type: String, 
-        enum: Roles, 
-        default: Role.user 
+    role: {
+        type: String,
+        enum: Roles,
+        default: Role.user
     },
 
 });
@@ -41,8 +41,7 @@ userSchema.set('toJSON', {
         //borramos el id de mongo
         delete ret._id;
         delete ret.password;
-        // eliminar campos que no querés exponer
-        // 
+        // eliminar campos que no querés exponer 
         delete ret.__v;
         // delete ret.createdAt;
         // delete ret.updatedAt;
