@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { Roles } from '../constants/role.constants.js';
+import { mensajesJoi } from '../v1/config/joi-message.js';
 
 //esquema de validacion para body registro
 export const registerBodySchema = Joi.object({
@@ -7,7 +8,10 @@ export const registerBodySchema = Joi.object({
     username: Joi.string().alphanum().min(3).lowercase().required(),
     email: Joi.string().email().lowercase().required(),
     password: Joi.string().min(3).max(30).required(),
-    confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+    confirmPassword: Joi.string()
+        .valid(Joi.ref("password"))
+        .messages({ "any.only": mensajesJoi['registro.passwordsNoCoinciden'] })
+        .required(),
     plan: Joi.string().valid("plus", "premium").required()
 })
 

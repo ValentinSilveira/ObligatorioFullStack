@@ -17,7 +17,11 @@ export const validateRequest = (schema, reqKey) => {
         if (error) {
             return next(error);
         }
-        req[reqKey] = value;
+         if (reqKey === "query") {
+            res.locals.validatedQuery = value;
+        } else {
+            req[reqKey] = value;
+        }
         return next();
     }
 }

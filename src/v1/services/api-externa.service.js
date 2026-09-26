@@ -29,6 +29,7 @@ export const generarQrReserva = async (idReserva) => {
             tipo: "reserva",
             id: idReserva
         });
+        //TODO: pasar mas datos al QR de la reserva
 
         const response = await apiExternas.get("", {
             params: {

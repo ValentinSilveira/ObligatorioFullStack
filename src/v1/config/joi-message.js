@@ -14,6 +14,7 @@ export const mensajesJoi = {
     'number.max': '{{#label}} debe ser menor o igual a {{#limit}}',
     'date.base': '{{#label}} debe ser una fecha válida',
     'date.format': '{{#label}} debe tener formato de fecha ISO (AAAA-MM-DD)',
+    'registro.passwordsNoCoinciden': 'Las contraseñas no coinciden',
     'reserva.horarioInvalido': 'La fecha y hora de la reserva deben ser al menos 30 minutos posteriores al momento actual',
     'reserva.horaFueraDeRango': 'La hora debe estar entre las 09:00 y las 18:30',
     'reserva.fechaInvalida': 'La fecha ingresada no existe',

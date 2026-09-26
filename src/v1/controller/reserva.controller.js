@@ -1,9 +1,22 @@
-import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva } from "../services/reserva.service.js";
+import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva, obtenerReservaPorId, getReservasByUserServicePaginated } from "../services/reserva.service.js";
 
 // listamos las reservas del usuario
 export const listarReservas = async (req, res) => {
-    const reservas = await getAllReservas(req.user.id);
-    return res.status(200).json(reservas);
+    const { pagina, limite } = res.locals.validatedQuery;
+
+    // Si la URL no indica paginación, mantenemos el formato original: un array.
+    if (pagina === undefined && limite === undefined) {
+        const reservas = await getAllReservas(req.user.id)
+        return res.status(200).json(reservas);
+    }
+    // Si llega solo uno de los parámetros, usamos el valor por defecto del otro.
+    const resultado = await getReservasByUserServicePaginated(req.user.id, {
+        pagina: pagina ?? 1,
+        limite: limite ?? 20,
+    });
+
+
+    return res.status(200).json(resultado);
 };
 
 // reservamos un turno para el usuario autenticado
@@ -39,4 +52,15 @@ export const reprogramarReservaController = async (req, res) => {
         message: "Reserva reprogramada con éxito.",
         reserva
     });
+};
+
+export const obtenerReservaController = async (req, res) => {
+    const { idReserva } = req.params;
+
+    const reserva = await obtenerReservaPorId(
+        idReserva,
+        req.user.id
+    );
+
+    return res.status(200).json(reserva);
 };

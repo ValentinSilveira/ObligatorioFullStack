@@ -121,6 +121,33 @@ export const getAllReservas = async (clienteId) => {
         .populate("categoriaId", "nombre -_id");
 };
 
+// Función para obtener todas las reservas de un cliente paginadas
+export const getReservasByUserServicePaginated = async (
+    cliente,
+    { pagina, limite }
+) => {
+    const filtro = { cliente };
+
+    const [reservas, total] = await Promise.all(
+        [
+            Reserva.find(filtro)
+                .sort({ _id: -1 })
+                .skip((pagina - 1) * limite)
+                .limit(limite)
+                .populate("cliente", "name email")
+                .populate("categoriaId", "nombrel"),
+            Reserva.countDocuments(filtro)
+        ]
+    );
+    return {
+        reservas,
+        pagina,
+        limite,
+        total,
+        totalPaginas: Math.ceil(total / limite)
+    };
+};
+
 // Función para cancelar (borrar) una reserva
 export const cancelarReserva = async (idReserva, clienteId) => {
     // verificamos que exista la reserva
