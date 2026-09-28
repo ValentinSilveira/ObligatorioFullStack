@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     plan: {
         type: String,
-        default: "Plus"
+        default: "plus"
     },
     role: {
         type: String,

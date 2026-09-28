@@ -27,12 +27,12 @@ export const createUserService = async (data) => {
     }
 
     // Se arma el objeto explícitamente para que un registro
-    // nunca pueda colarse con un "role" propio: siempre queda el default ("user") del modelo.
+    // nunca pueda colarse con un "role" o "plan" propio: siempre quedan
+    // los defaults ("user" y "Plus") del modelo.
     const userData = {
         name: data.name,
         username: data.username,
         email: data.email,
-        plan: data.plan,
         password: await hashear(data.password)
     };
 
