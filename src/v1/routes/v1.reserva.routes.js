@@ -19,7 +19,6 @@ turnosRoutes.patch("/:idReserva", validateParamsIdReservaMiddleware, middlewareV
 turnosRoutes.delete("/:idReserva", validateParamsIdReservaMiddleware, cancelarReservaController);
 turnosRoutes.get("/:idReserva/qr", validateParamsIdReservaMiddleware, generarQrReservaController);
 turnosRoutes.get("/:idReserva", validateParamsIdReservaMiddleware, obtenerReservaController);
-   
-// TODO: agregar middlewares para validar rol (para cosas que solo pueda hacer el admin) y de params
+
 
 export default turnosRoutes;

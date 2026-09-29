@@ -13,6 +13,5 @@ v1Routes.use("/auth", authRoutes);
 v1Routes.use("/users", userRoutes)
 v1Routes.use("/reservas", reservaRoutes)
 v1Routes.use("/categorias", categoriaRoutes)
-//TODO: agregar para productos
 
 export default v1Routes
