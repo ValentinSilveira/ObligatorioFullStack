@@ -1,0 +1,2567 @@
+{
+  "info": {
+    "_postman_id": "2f51bb66-fda7-4d69-a4e2-354cb6be8432",
+    "name": "DesarrolloFullStack",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55527769",
+    "_collection_link": "https://go.postman.co/collection/55527769-2f51bb66-fda7-4d69-a4e2-354cb6be8432?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Pruebas",
+      "item": [
+        {
+          "name": "Login admin Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\npm.collectionVariables.set(\"access_token\", response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"identificador\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoria Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"categoriaId\",\r\n        responseBody.categoria.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer ",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Medica\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias' \\\r\n--header 'Authorization: Bearer ' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"Otro\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear categoria duplicada Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"categoriaId\",\r\n        responseBody.categoria.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer ",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Medica\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias' \\\r\n--header 'Authorization: Bearer ' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"Otro\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar categoria Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"otros\",\r\n  \"descripcion\": \"Nueva descripción test\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{dev_base_url}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            },
+            "description": "Generated from cURL: curl --location --request PATCH 'http://localhost:3000/api/v1/categorias/6ab075e0162c3dc731ca4394' \\\r\n--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"salud\",\r\n  \"descripcion\": \"Nueva descripción test\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de categorias - Ver borrado Copy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{dev_base_url}}/categorias",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias'"
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar categoria Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{dev_base_url}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            },
+            "description": "Generated from cURL: curl --location --request DELETE 'http://localhost:3000/api/v1/categorias/6ab075e0162c3dc731ca4394' \\\r\n--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI' \\\r\n--data ''"
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de categorias - Ver borrado Copy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{dev_base_url}}/categorias",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias'"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoria (para que quede para las reservas) Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"categoriaId\",\r\n        responseBody.categoria.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer ",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Medica\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{dev_base_url}}/categorias",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias' \\\r\n--header 'Authorization: Bearer ' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"Otro\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Create user Copy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const numero = Math.floor(Math.random() * 100000);\r\nconst username = `usuario${numero}`;\r\npm.collectionVariables.set(\"username\", username);\r\n"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\nconst requestBody = JSON.parse(pm.request.body.raw);\r\n\r\nconst responseBody = pm.response.json();\r\n \r\n\r\n pm.test(\"La respuesta contiene un token\", () => {\r\n    pm.expect(responseBody).to.have.property(\"token\");\r\n    pm.expect(responseBody.token).to.be.a(\"string\");\r\n});\r\n\r\nconst response = pm.response.json();\r\npm.collectionVariables.set(\"access_token\", response.token);\r\n \r\npm.collectionVariables.set(\r\n    \"loginUsername\",\r\n    responseBody.user.username\r\n);\r\n\r\npm.collectionVariables.set(\r\n    \"loginPassword\",\r\n    requestBody.password\r\n);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"prueba4\",\r\n    \"confirmPassword\": \"prueba4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - create user with diferent password Copy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const numero = Math.floor(Math.random() * 100000);\r\nconst username = `usuario${numero}`;\r\npm.collectionVariables.set(\"username\", username);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"prueba4\",\r\n    \"confirmPassword\": \"prueba3\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - create with user that already exist Copy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const numero = Math.floor(Math.random() * 100000);\r\nconst username = `usuario${numero}`;\r\npm.collectionVariables.set(\"username\", username);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"username\": \"{{loginUsername}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"prueba4\",\r\n    \"confirmPassword\": \"prueba4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login user Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\npm.collectionVariables.set(\"access_token\", response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"identificador\": \"{{loginUsername}}\",\r\n    \"password\": \"{{loginPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar plan a premium Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"plan\": \"premium\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/plan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "plan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar plan a plus Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"plan\": \"plus\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/plan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "plan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 1 Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"11:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 2 Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"12:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 3 Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"13:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 4 Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear reserva llego al limite Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"18:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear reserva con token incorrecto Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "124",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"02-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear reserva sin token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"02-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar fecha Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \n    \"nuevaFecha\": \"27-09-2027\", \n    \"nuevaHora\": \"12:00\" \n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de reservas por usuario Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/reservas' \\\n--header 'Authorization: Bearer '"
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de reservas por usuario paginadas Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reservas?pagina=1&limite=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "2"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/reservas' \\\n--header 'Authorization: Bearer '"
+          },
+          "response": []
+        },
+        {
+          "name": "Reserva por id Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "QR reserva Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}/qr",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}",
+                "qr"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar reserva Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Embellecer texto Copy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"texto\": \"Mi perro no para de estornudar\",\n    \"tono\": \"profesional veterinario\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}}/public/embellecer",
+              "host": [
+                "{{base_url}}}"
+              ],
+              "path": [
+                "public",
+                "embellecer"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\npm.collectionVariables.set(\"access_token\", response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"identificador\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const numero = Math.floor(Math.random() * 100000);\r\nconst username = `usuario${numero}`;\r\npm.collectionVariables.set(\"username\", username);\r\n"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\nconst requestBody = JSON.parse(pm.request.body.raw);\r\n\r\nconst responseBody = pm.response.json();\r\n \r\n\r\n pm.test(\"La respuesta contiene un token\", () => {\r\n    pm.expect(responseBody).to.have.property(\"token\");\r\n    pm.expect(responseBody.token).to.be.a(\"string\");\r\n});\r\n\r\nconst response = pm.response.json();\r\npm.collectionVariables.set(\"access_token\", response.token);\r\n \r\npm.collectionVariables.set(\r\n    \"loginUsername\",\r\n    responseBody.user.username\r\n);\r\n\r\npm.collectionVariables.set(\r\n    \"loginPassword\",\r\n    requestBody.password\r\n);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"prueba4\",\r\n    \"confirmPassword\": \"prueba4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\npm.collectionVariables.set(\"access_token\", response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"identificador\": \"{{loginUsername}}\",\r\n    \"password\": \"{{loginPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - create user with diferent password",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const numero = Math.floor(Math.random() * 100000);\r\nconst username = `usuario${numero}`;\r\npm.collectionVariables.set(\"username\", username);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"prueba4\",\r\n    \"confirmPassword\": \"prueba3\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - create with user that already exist",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const numero = Math.floor(Math.random() * 100000);\r\nconst username = `usuario${numero}`;\r\npm.collectionVariables.set(\"username\", username);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{$randomUserName}}\",\r\n    \"username\": \"{{loginUsername}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"prueba4\",\r\n    \"confirmPassword\": \"prueba4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar plan a premium",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"plan\": \"premium\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/plan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "plan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar plan a plus",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"plan\": \"plus\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/plan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "plan"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reservas",
+      "item": [
+        {
+          "name": "Crear reserva 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"11:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"12:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"13:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 4",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear reserva llego al limite",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"21-10-2026\",\n  \"hora\": \"18:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear reserva con token incorrecto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "124",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"02-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear reserva sin token Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"02-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar fecha",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \n    \"nuevaFecha\": \"27-09-2027\", \n    \"nuevaHora\": \"12:00\" \n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de reservas por usuario",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/reservas' \\\n--header 'Authorization: Bearer '"
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de reservas por usuario paginadas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reservas?pagina=1&limite=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "2"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/reservas' \\\n--header 'Authorization: Bearer '"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar reserva",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reserva por id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "IA",
+      "item": [
+        {
+          "name": "Embellecer texto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"texto\": \"Mi perro no para de estornudar\",\n    \"tono\": \"profesional veterinario\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}}/public/embellecer",
+              "host": [
+                "{{base_url}}}"
+              ],
+              "path": [
+                "public",
+                "embellecer"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Api externa",
+      "item": [
+        {
+          "name": "QR reserva",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reservas/{{idReserva}}/qr",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas",
+                "{{idReserva}}",
+                "qr"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categoria",
+      "item": [
+        {
+          "name": "Crear categoria",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"categoriaId\",\r\n        responseBody.categoria.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer ",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Medica\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias' \\\r\n--header 'Authorization: Bearer ' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"Otro\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Crear categoria duplicada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"categoriaId\",\r\n        responseBody.categoria.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer ",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Medica\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias' \\\r\n--header 'Authorization: Bearer ' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"Otro\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de categorias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{dev_base_url}}/categorias",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias'"
+          },
+          "response": []
+        },
+        {
+          "name": "Modificar categoria",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"otros\",\r\n  \"descripcion\": \"Nueva descripción test\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{dev_base_url}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            },
+            "description": "Generated from cURL: curl --location --request PATCH 'http://localhost:3000/api/v1/categorias/6ab075e0162c3dc731ca4394' \\\r\n--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"salud\",\r\n  \"descripcion\": \"Nueva descripción test\"\r\n}'"
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar categoria",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{dev_base_url}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            },
+            "description": "Generated from cURL: curl --location --request DELETE 'http://localhost:3000/api/v1/categorias/6ab075e0162c3dc731ca4394' \\\r\n--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjA3NTdjMTYyYzNkYzczMWNhNDM5MyIsInVzZXJuYW1lIjoidmFsZW50aW50ZXN0MSIsIm5hbWUiOiJWYWxlbnRpbiBUZXN0IiwiZW1haWwiOiJ2YWxlbnRpbjExQHRlc3QuY29tIiwiaWF0IjoxNzg5OTQ5MzE4LCJleHAiOjE3OTAwMzU3MTgsImF1ZCI6Imp3dC1kZW1vLWNsaWVudCIsImlzcyI6Imp3dC1kZW1vLWFwaSJ9.k7li8QzEGMooV7zjM0yMffOaydgFOvNeguDFyO_UtoI' \\\r\n--data ''"
+          },
+          "response": []
+        },
+        {
+          "name": "Lista de categorias - Ver borrado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{dev_base_url}}/categorias",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias'"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoria (para que quede para las reservas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"categoriaId\",\r\n        responseBody.categoria.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer ",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Medica\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{dev_base_url}}/categorias",
+              "host": [
+                "{{dev_base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:3000/api/v1/categorias' \\\r\n--header 'Authorization: Bearer ' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"nombre\": \"Otro\",\r\n  \"descripcion\": \"Consulta con veterinario\"\r\n}'"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "dev_base_url",
+      "value": ""
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "loginUsername",
+      "value": ""
+    },
+    {
+      "key": "loginPassword",
+      "value": ""
+    },
+    {
+      "key": "idReserva",
+      "value": ""
+    },
+    {
+      "key": "reservaId",
+      "value": ""
+    },
+    {
+      "key": "categoriaId",
+      "value": ""
+    },
+    {
+      "key": "prod_base_url",
+      "value": ""
+    },
+    {
+      "key": "base_url",
+      "value": ""
+    }
+  ]
+}
