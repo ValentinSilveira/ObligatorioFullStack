@@ -11,7 +11,7 @@ export const registerBodySchema = Joi.object({
     confirmPassword: Joi.string()
         .valid(Joi.ref("password"))
         .messages({ "any.only": mensajesJoi['registro.passwordsNoCoinciden'] })
-        .required()
+        .required(),
 })
 
 export const roleSchema = Joi.object({
