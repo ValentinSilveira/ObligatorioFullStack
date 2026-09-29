@@ -10,10 +10,11 @@ import { Role } from "../../constants/role.constants.js";
 
 const categoriaRoutes = Router();
 
+categoriaRoutes.use(authMiddleware);
+
 categoriaRoutes.get("/", listarCategorias);
 categoriaRoutes.get("/:idCategoria", getCategoria);
 
-categoriaRoutes.use(authMiddleware);
 categoriaRoutes.use(requireRole(Role.admin));
 
 categoriaRoutes.post("/", validateRequest(categoriaBodySchema, "body"), createCategoriaController);
