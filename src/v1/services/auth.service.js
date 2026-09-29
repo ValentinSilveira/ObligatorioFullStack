@@ -32,7 +32,6 @@ export const createUserService = async (data) => {
         name: data.name,
         username: data.username,
         email: data.email,
-        plan: data.plan,
         password: await hashear(data.password)
     };
 
