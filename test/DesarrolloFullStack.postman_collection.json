@@ -205,9 +205,9 @@
               }
             },
             "url": {
-              "raw": "{{dev_base_url}}/categorias/{{categoriaId}}",
+              "raw": "{{base_url}}/categorias/{{categoriaId}}",
               "host": [
-                "{{dev_base_url}}"
+                "{{base_url}}"
               ],
               "path": [
                 "categorias",
@@ -221,12 +221,22 @@
         {
           "name": "Lista de categorias - Ver borrado Copy",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{dev_base_url}}/categorias",
+              "raw": "{{base_url}}/categorias",
               "host": [
-                "{{dev_base_url}}"
+                "{{base_url}}"
               ],
               "path": [
                 "categorias"
@@ -258,9 +268,9 @@
               }
             ],
             "url": {
-              "raw": "{{dev_base_url}}/categorias/{{categoriaId}}",
+              "raw": "{{base_url}}/categorias/{{categoriaId}}",
               "host": [
-                "{{dev_base_url}}"
+                "{{base_url}}"
               ],
               "path": [
                 "categorias",
@@ -274,12 +284,22 @@
         {
           "name": "Lista de categorias - Ver borrado Copy",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{dev_base_url}}/categorias",
+              "raw": "{{base_url}}/categorias",
               "host": [
-                "{{dev_base_url}}"
+                "{{base_url}}"
               ],
               "path": [
                 "categorias"
@@ -335,9 +355,9 @@
               }
             },
             "url": {
-              "raw": "{{dev_base_url}}/categorias",
+              "raw": "{{base_url}}/categorias",
               "host": [
-                "{{dev_base_url}}"
+                "{{base_url}}"
               ],
               "path": [
                 "categorias"
@@ -887,6 +907,108 @@
           "response": []
         },
         {
+          "name": "Modificar plan a premium para siguiente prueba Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"plan\": \"premium\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/plan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "plan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva 5 con Premium Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const responseBody = pm.response.json();\r\n\r\npm.collectionVariables.set(\r\n        \"idReserva\",\r\n        responseBody.reserva.id\r\n    );"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"27-10-2026\",\n  \"hora\": \"15:30\",\n  \"mascota\": \"perro\",\n  \"nombreMascota\": \"Firulais15\",\n  \"edadMascota\": 3,\n  \"motivo\": \"bano para el perrito\",\n  \"categoriaId\": \"{{categoriaId}}\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Error - Crear reserva con token incorrecto Copy",
           "request": {
             "auth": {
@@ -1228,9 +1350,9 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}}/public/embellecer",
+              "raw": "{{base_url}}/public/embellecer",
               "host": [
-                "{{base_url}}}"
+                "{{base_url}}"
               ],
               "path": [
                 "public",
