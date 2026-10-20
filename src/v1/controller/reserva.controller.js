@@ -1,5 +1,7 @@
 import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva, obtenerReservaPorId, getReservasByUserServicePaginated } from "../services/reserva.service.js";
 
+// Conectamos http con logica de negocio
+
 // listamos las reservas del usuario
 export const listarReservas = async (req, res) => {
     const { pagina, limite } = res.locals.validatedQuery;

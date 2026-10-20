@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Categoria from "../models/categoria.model.js";
+import Reserva from "../models/reserva.model.js";
 import { AppError } from "../../utils/appError.js";
 
 export const crearCategoria = async (nombre, descripcion) => {
@@ -43,12 +45,27 @@ export const updateCategoria = async (id, data) => {
     }
 };
 
+// Elimina la categoría solo si ninguna reserva la usa. Va en transacción porque crearReserva
+// escribe el documento de la categoría: si ambas operaciones corren a la vez, una entra en
+// conflicto y se reintenta, así nunca queda una reserva apuntando a una categoría borrada.
 export const eliminarCategoria = async (id) => {
-    const categoria = await Categoria.findByIdAndDelete(id);
+    const session = await mongoose.startSession();
+    let categoriaEliminada;
+    try {
+        await session.withTransaction(async () => {
+            const enUso = await Reserva.exists({ categoriaId: id }).session(session);
+            if (enUso) {
+                throw new AppError(409, "No se puede eliminar la categoría porque hay reservas que la utilizan.");
+            }
 
-    if (!categoria) {
-        throw new AppError(404, "La categoría no existe.");
+            const categoria = await Categoria.findByIdAndDelete(id, { session });
+            if (!categoria) {
+                throw new AppError(404, "La categoría no existe.");
+            }
+            categoriaEliminada = categoria;
+        });
+        return categoriaEliminada;
+    } finally {
+        await session.endSession();
     }
-
-    return categoria;
 };

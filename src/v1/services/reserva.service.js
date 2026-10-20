@@ -1,8 +1,12 @@
+import mongoose from "mongoose";
 import Reserva from "../models/reserva.model.js";
 import Categoria from "../models/categoria.model.js";
+import User from "../models/user.model.js";
+import AgendaDia from "../models/agenda-dia.model.js";
 import { AppError } from "../../utils/appError.js";
 import { embellishText } from "./embellish-text.service.js"
-import { getUserByIdService } from "./user.services.js";
+
+// service se encarga de la logica de negocio, validaciones y reglas de negocio.
 
 const MARGEN_ENTRE_RESERVAS_MS = 30 * 60 * 1000;
 const LIMITE_RESERVAS_ANUALES_PLUS = 4;
@@ -20,15 +24,26 @@ const aFechaHora = (fecha, hora) => {
     return new Date(`${fechaStr}T${hora}:00`);
 };
 
+// Modifica el documento de agenda del día (lo crea si no existe). Todas las transacciones
+// que reservan ese día escriben el mismo documento, así que si dos corren a la vez una
+// entra en conflicto y se reintenta, viendo ya la reserva de la otra.
+const bloquearDia = async (fecha, session) => {
+    await AgendaDia.findOneAndUpdate(
+        { fecha },
+        { $inc: { guard: 1 } },
+        { upsert: true, session }
+    );
+};
+
 // Verifica que no haya otra reserva ese día a menos de 30 minutos de la hora solicitada
-const asegurarDistanciaMinima = async (fecha, hora, idReservaExcluida = null) => {
+const asegurarDistanciaMinima = async (fecha, hora, session, idReservaExcluida = null) => {
     const fechaHoraSolicitada = aFechaHora(fecha, hora);
     const filtro = { fecha };
     if (idReservaExcluida) {
         filtro._id = { $ne: idReservaExcluida };
     }
     // Buscamos todas las reservas del mismo día
-    const reservasDelDia = await Reserva.find(filtro);
+    const reservasDelDia = await Reserva.find(filtro).session(session);
     // Verificamos si alguna reserva existente está a menos de 30 minutos de la solicitada
     const hayConflicto = reservasDelDia.some(reserva => {
         const fechaHoraExistente = aFechaHora(reserva.fecha, reserva.hora);
@@ -40,9 +55,14 @@ const asegurarDistanciaMinima = async (fecha, hora, idReservaExcluida = null) =>
     }
 };
 
-// Verifica que la categoría exista
-const asegurarCategoriaExistente = async (categoriaId) => {
-    const categoria = await Categoria.findById(categoriaId);
+// Verifica que la categoría exista. Se hace con una escritura (no una lectura) para que
+// una eliminación concurrente de la categoría entre en conflicto con esta transacción.
+const asegurarCategoriaExistente = async (categoriaId, session) => {
+    const categoria = await Categoria.findOneAndUpdate(
+        { _id: categoriaId },
+        { $inc: { reservaGuard: 1 } },
+        { session }
+    );
 
     if (!categoria) {
         throw new AppError(404, "La categoría no existe.");
@@ -60,13 +80,20 @@ const rangoDelAnio = (fecha) => {
 
 // Verifica el límite de reservas anuales según el plan del cliente.
 // Los usuarios "premium" tienen reservas ilimitadas; el resto (ej. "plus") tiene un tope anual.
-const asegurarLimiteDePlan = async (clienteId, fecha, idReservaExcluida = null) => {
+const asegurarLimiteDePlan = async (clienteId, fecha, session, idReservaExcluida = null) => {
     // obtenemos el cliente para revisar su plan
-    const cliente = await getUserByIdService(clienteId);
+    const cliente = await User.findById(clienteId).session(session);
+    if (!cliente) {
+        throw new AppError(404, "El usuario no existe.");
+    }
     //  Si el cliente es premium, no hay límite de reservas anuales
     if (cliente.plan?.toLowerCase() === "premium") {
         return;
     }
+    // Modificamos el documento del usuario para serializar sus altas concurrentes:
+    // si otra transacción del mismo usuario corre a la vez, una se reintenta y
+    // cuenta también la reserva de la otra.
+    await User.updateOne({ _id: clienteId }, { $inc: { reservaLimitGuard: 1 } }, { session });
     // Si el cliente es plus, verificamos cuántas reservas tiene en el 
     // año calendario de la fecha solicitada
     const { inicio, fin } = rangoDelAnio(fecha);
@@ -75,7 +102,7 @@ const asegurarLimiteDePlan = async (clienteId, fecha, idReservaExcluida = null) 
         filtro._id = { $ne: idReservaExcluida };
     }
     // Contamos cuántas reservas tiene el cliente en ese año calendario
-    const cantidadReservasDelAnio = await Reserva.countDocuments(filtro);
+    const cantidadReservasDelAnio = await Reserva.countDocuments(filtro).session(session);
     if (cantidadReservasDelAnio >= LIMITE_RESERVAS_ANUALES_PLUS) {
         throw new AppError(409, `Alcanzaste el límite de ${LIMITE_RESERVAS_ANUALES_PLUS} reservas anuales de tu plan.`);
     }
@@ -83,27 +110,35 @@ const asegurarLimiteDePlan = async (clienteId, fecha, idReservaExcluida = null) 
 
 // Función para crear una nueva reserva
 export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo) => {
+    // La llamada a la API externa va fuera de la transacción para no mantenerla
+    // abierta ni repetir la llamada si la transacción se reintenta.
+    const motivoProfesional = await embellishText(
+        motivo,
+        "profesional veterinario"
+    );
+
+    const session = await mongoose.startSession();
+    let nuevaReserva;
     try {
-        await asegurarCategoriaExistente(categoriaId);
-        await asegurarDistanciaMinima(fecha, hora);
-        await asegurarLimiteDePlan(clienteId, fecha);
+        await session.withTransaction(async () => {
+            await asegurarCategoriaExistente(categoriaId, session);
+            await bloquearDia(fecha, session);
+            await asegurarDistanciaMinima(fecha, hora, session);
+            await asegurarLimiteDePlan(clienteId, fecha, session);
 
-        const motivoProfesional = await embellishText(
-            motivo,
-            "profesional veterinario"
-        );
-
-        const nuevaReserva = await Reserva.create({
-            cliente: clienteId,
-            categoriaId,
-            fecha,
-            hora,
-            mascota,
-            nombreMascota,
-            edadMascota,
-            motivo,
-            motivoProfesional,
-            estado: "pendiente"
+            const [reserva] = await Reserva.create([{
+                cliente: clienteId,
+                categoriaId,
+                fecha,
+                hora,
+                mascota,
+                nombreMascota,
+                edadMascota,
+                motivo,
+                motivoProfesional,
+                estado: "pendiente"
+            }], { session });
+            nuevaReserva = reserva;
         });
         return nuevaReserva;
     } catch (error) {
@@ -111,6 +146,8 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
             throw new AppError(409, "Ya existe una reserva para esa fecha y hora.");
         }
         throw error;
+    } finally {
+        await session.endSession();
     }
 };
 
@@ -163,38 +200,46 @@ export const cancelarReserva = async (idReserva, clienteId) => {
 
 // Función para reprogramar una reserva
 export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora) => {
-    // verificamos que exista la reserva
-    const reserva = await Reserva.findById(idReserva);
-    if (!reserva) {
-        throw new AppError(404, "La reserva no existe.");
-    }
-    // verificamos que el cliente sea el propietario de la reserva
-    asegurarPropietario(reserva, clienteId);
-    await asegurarDistanciaMinima(nuevaFecha, nuevaHora, idReserva);
-    // Si la reprogramación cambia de año calendario, se vuelve a validar el cupo del plan
-    if (nuevaFecha.getUTCFullYear() !== reserva.fecha.getUTCFullYear()) {
-        await asegurarLimiteDePlan(clienteId, nuevaFecha, idReserva);
-    }
-    reserva.fecha = nuevaFecha;
-    reserva.hora = nuevaHora;
+    const session = await mongoose.startSession();
+    let reservaReprogramada;
     try {
-        await reserva.save();
+        await session.withTransaction(async () => {
+            // verificamos que exista la reserva
+            const reserva = await Reserva.findById(idReserva).session(session);
+            if (!reserva) {
+                throw new AppError(404, "La reserva no existe.");
+            }
+            // verificamos que el cliente sea el propietario de la reserva
+            asegurarPropietario(reserva, clienteId);
+            await bloquearDia(nuevaFecha, session);
+            await asegurarDistanciaMinima(nuevaFecha, nuevaHora, session, idReserva);
+            // Si la reprogramación cambia de año calendario, se vuelve a validar el cupo del plan
+            if (nuevaFecha.getUTCFullYear() !== reserva.fecha.getUTCFullYear()) {
+                await asegurarLimiteDePlan(clienteId, nuevaFecha, session, idReserva);
+            }
+            reserva.fecha = nuevaFecha;
+            reserva.hora = nuevaHora;
+            await reserva.save({ session });
+            reservaReprogramada = reserva;
+        });
+        return reservaReprogramada;
     } catch (error) {
         if (error.code === 11000) {
             throw new AppError(409, "Ese horario ya está ocupado por otra reserva.");
         }
         throw error;
+    } finally {
+        await session.endSession();
     }
-    return reserva;
 };
 
 export const obtenerReservaPorId = async (idReserva, clienteId) => {
     const reserva = await Reserva.findById(idReserva);
 
-    if(!reserva){
+    if (!reserva) {
         throw new AppError(404, "La reserva no existe");
     }
 
-    asegurarPropietario(reserva , clienteId);
+    asegurarPropietario(reserva, clienteId);
     return reserva;
 };

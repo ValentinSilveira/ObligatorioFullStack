@@ -1,5 +1,7 @@
 import joi from "joi";
 
+//Validacion de entrada de datos ingresados por el usuario 
+
 const MARGEN_MINIMO_MS = 30 * 60 * 1000;
 const HORA_APERTURA = "09:00";
 const HORA_CIERRE = "18:30";

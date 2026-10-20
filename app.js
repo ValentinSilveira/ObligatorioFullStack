@@ -22,7 +22,6 @@ app.use(
     "/api",
 
     apiRateLimit,
-
     // Después conectamos MongoDB.
     async (req, res, next) => {
         try {
@@ -32,7 +31,6 @@ app.use(
             next(error);
         }
     },
-
     // Finalmente procesamos las rutas.
     apiRoutes
 );

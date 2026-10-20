@@ -30,6 +30,13 @@ const userSchema = new mongoose.Schema({
         enum: Roles,
         default: Role.user
     },
+    // Se incrementa en cada alta de reserva de un usuario no premium para
+    // serializar las transacciones concurrentes y respetar el límite anual.
+    reservaLimitGuard: {
+        type: Number,
+        default: 0,
+        select: false
+    },
 
 });
 
