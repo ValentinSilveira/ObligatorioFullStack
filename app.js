@@ -4,10 +4,14 @@ import { connectMongo } from "./src/v1/config/mongo.config.js";
 import apiRoutes from "./src/v1/routes/index.js";
 import { middlewareErrores } from "./src/middleware/error.middleware.js";
 import { apiRateLimit } from "./src/v1/middleware/rate-limit.middleware.js";
-
-// connectRedis();
+import cors from "cors";
 
 const app = express();
+
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'DELETE', 'PATCH']
+}));
 
 app.use(express.json());
 
