@@ -1,6 +1,7 @@
 import { Router } from "express"
-import { getUserController, updateUserController, deleteUserController, updatePlanController, listarClientesController } from "../controller/user.controller.js"
+import { getUserController, updateUserController, deleteUserController, updatePlanController, listarClientesController, actualizarClienteController, eliminarClienteController } from "../controller/user.controller.js"
 import { authMiddleware, requireRole } from "../../middleware/auth.middleware.js";
+import { validateParamsIdClienteMiddleware } from "../../middleware/params.middleware.js";
 import { Role } from "../../constants/role.constants.js";
 import { validateRequest } from "../../middleware/validate.middleware.js";
 import { planBodySchema } from "../../schemas/plan-body.schema.js";
@@ -17,8 +18,10 @@ userRoutes.delete("/", deleteUserController);
 
 userRoutes.patch("/plan", validateRequest(planBodySchema, "body"), updatePlanController);
 
-// lista de clientes, solo para el admin
+// clientes, solo para el admin: listar, editar (sin el plan) y eliminar
 userRoutes.get("/clientes", requireRole(Role.admin), listarClientesController);
+userRoutes.patch("/clientes/:idCliente", requireRole(Role.admin), validateParamsIdClienteMiddleware, validateRequest(updateUserBodySchema, "body"), actualizarClienteController);
+userRoutes.delete("/clientes/:idCliente", requireRole(Role.admin), validateParamsIdClienteMiddleware, eliminarClienteController);
 
 export default userRoutes
 
