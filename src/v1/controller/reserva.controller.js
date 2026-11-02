@@ -1,4 +1,11 @@
-import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva, obtenerReservaPorId, getReservasByUserServicePaginated } from "../services/reserva.service.js";
+import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva, obtenerReservaPorId, getReservasByUserServicePaginated, getReservasDelDia } from "../services/reserva.service.js";
+
+// listamos todas las reservas de un día (solo admin)
+export const agendaDelDiaController = async (req, res) => {
+    const { fecha } = res.locals.validatedQuery;
+    const reservas = await getReservasDelDia(fecha);
+    return res.status(200).json(reservas);
+};
 
 // listamos las reservas del usuario
 export const listarReservas = async (req, res) => {
