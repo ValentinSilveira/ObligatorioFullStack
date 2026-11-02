@@ -84,14 +84,18 @@ const asegurarLimiteDePlan = async (clienteId, fecha, idReservaExcluida = null) 
 // Función para crear una nueva reserva
 export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo) => {
     try {
+        // La IA es lo que más demora: se lanza primero y corre en paralelo con las validaciones.
+        // embellishText nunca rechaza (si falla devuelve el texto original).
+        const motivoProfesionalPromesa = embellishText(
+            motivo,
+            "profesional veterinario"
+        );
+
         await asegurarCategoriaExistente(categoriaId);
         await asegurarDistanciaMinima(fecha, hora);
         await asegurarLimiteDePlan(clienteId, fecha);
 
-        const motivoProfesional = await embellishText(
-            motivo,
-            "profesional veterinario"
-        );
+        const motivoProfesional = await motivoProfesionalPromesa;
 
         const nuevaReserva = await Reserva.create({
             cliente: clienteId,
@@ -103,7 +107,7 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
             edadMascota,
             motivo,
             motivoProfesional,
-            estado: "pendiente"
+            estado: "confirmada"
         });
         return nuevaReserva;
     } catch (error) {
@@ -112,6 +116,14 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
         }
         throw error;
     }
+};
+
+// Función para obtener todas las reservas de un día (agenda del admin), ordenadas por hora
+export const getReservasDelDia = async (fecha) => {
+    return await Reserva.find({ fecha })
+        .sort({ hora: 1 })
+        .populate("cliente", "name username -_id")
+        .populate("categoriaId", "nombre -_id");
 };
 
 // Función para obtener todas las reservas de un cliente

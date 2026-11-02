@@ -50,7 +50,7 @@ const parsearFechaDDMMAAAA = (value, helpers) => {
 };
 
 // Defino un esquema de validación para la fecha en formato DD-MM-AAAA
-const fechaSchema = joi.string()
+export const fechaSchema = joi.string()
     .pattern(/^\d{2}-\d{2}-\d{4}$/)
     .messages({ "string.pattern.base": "{{#label}} debe tener el formato DD-MM-AAAA" })
     .custom(parsearFechaDDMMAAAA)
