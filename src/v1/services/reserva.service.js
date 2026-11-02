@@ -173,8 +173,8 @@ export const cancelarReserva = async (idReserva, clienteId) => {
     return reserva;
 };
 
-// Función para reprogramar una reserva
-export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora) => {
+// Función para reprogramar una reserva (y opcionalmente cambiar el nombre de la mascota)
+export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora, nombreMascota) => {
     // verificamos que exista la reserva
     const reserva = await Reserva.findById(idReserva);
     if (!reserva) {
@@ -189,6 +189,9 @@ export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nueva
     }
     reserva.fecha = nuevaFecha;
     reserva.hora = nuevaHora;
+    if (nombreMascota !== undefined) {
+        reserva.nombreMascota = nombreMascota;
+    }
     try {
         await reserva.save();
     } catch (error) {

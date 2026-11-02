@@ -68,7 +68,9 @@ export const reservaBodySchema = joi.object({
 }).custom(crearValidadorFechaHoraFutura("fecha", "hora"));
 
 // esquema de validación para el cuerpo de la solicitud de la reprogramación de reserva
+// nombreMascota es opcional: si viene, también se actualiza (mismas reglas que al crear)
 export const reprogramarBodySchema = joi.object({
     nuevaFecha: fechaSchema,
     nuevaHora: horaSchema,
+    nombreMascota: joi.string().trim().min(1).max(50),
 }).custom(crearValidadorFechaHoraFutura("nuevaFecha", "nuevaHora"));
