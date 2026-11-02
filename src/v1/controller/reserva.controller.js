@@ -51,12 +51,12 @@ export const cancelarReservaController = async (req, res) => {
 // reprogramamos una reserva del usuario autenticado
 export const reprogramarReservaController = async (req, res) => {
     const { idReserva } = req.params;
-    const { nuevaFecha, nuevaHora } = req.body;
+    const { nuevaFecha, nuevaHora, nombreMascota } = req.body;
 
-    const reserva = await reprogramarReserva(idReserva, req.user.id, nuevaFecha, nuevaHora);
+    const reserva = await reprogramarReserva(idReserva, req.user.id, nuevaFecha, nuevaHora, nombreMascota);
 
     return res.status(200).json({
-        message: "Reserva reprogramada con éxito.",
+        message: "Reserva actualizada con éxito.",
         reserva
     });
 };
