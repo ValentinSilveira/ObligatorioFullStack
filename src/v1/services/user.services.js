@@ -1,6 +1,11 @@
 import User from "../models/user.model.js";
 import { AppError } from "../../utils/appError.js";
+import { Role } from "../../constants/role.constants.js";
 
+// lista de clientes (usuarios con rol "user") para el admin, ordenados por nombre de usuario
+export const getClientesService = async () => {
+    return await User.find({ role: Role.user }).sort({ username: 1 });
+};
 
 export const getUserByIdService = async (id) => {
     const user = await User.findById(id);
