@@ -1,4 +1,10 @@
-import { deleteUserService, updatePlanService, updateUserService, getUserByIdService } from "../services/user.services.js";
+import { deleteUserService, updatePlanService, updateUserService, getUserByIdService, getClientesService } from "../services/user.services.js";
+
+// listamos todos los clientes (solo admin)
+export const listarClientesController = async (req, res) => {
+    const clientes = await getClientesService();
+    return res.status(200).json(clientes);
+};
 
 export const getUserController = async (req, res) => {
     const user = await getUserByIdService(req.user.id);
