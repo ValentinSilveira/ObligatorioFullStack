@@ -82,7 +82,7 @@ const asegurarLimiteDePlan = async (clienteId, fecha, idReservaExcluida = null) 
 };
 
 // Función para crear una nueva reserva
-export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo) => {
+export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo, imageUrl, imagePublicId) => {
     try {
         // La IA es lo que más demora: se lanza primero y corre en paralelo con las validaciones.
         // embellishText nunca rechaza (si falla devuelve el texto original).
@@ -107,7 +107,9 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
             edadMascota,
             motivo,
             motivoProfesional,
-            estado: "confirmada"
+            estado: "confirmada",
+            imageUrl: imageUrl || undefined,
+            imagePublicId: imagePublicId || undefined,
         });
         return nuevaReserva;
     } catch (error) {

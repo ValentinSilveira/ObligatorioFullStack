@@ -28,14 +28,35 @@ export const listarReservas = async (req, res) => {
 
 // reservamos un turno para el usuario autenticado
 export const reservarTurno = async (req, res) => {
-    const { categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo } = req.body;
+  const {
+    categoriaId,
+    fecha,
+    hora,
+    mascota,
+    nombreMascota,
+    edadMascota,
+    motivo,
+    imageUrl,
+    imagePublicId,
+  } = req.body;
 
-    const reservaExitosa = await crearReserva(req.user.id, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo);
+  const reservaExitosa = await crearReserva(
+    req.user.id,
+    categoriaId,
+    fecha,
+    hora,
+    mascota,
+    nombreMascota,
+    edadMascota,
+    motivo,
+    imageUrl,
+    imagePublicId,
+  );
 
-    return res.status(201).json({
-        message: "¡Turno reservado con éxito!",
-        reserva: reservaExitosa
-    });
+  return res.status(201).json({
+    message: "¡Turno reservado con éxito!",
+    reserva: reservaExitosa,
+  });
 };
 
 // cancelamos una reserva del usuario autenticado
