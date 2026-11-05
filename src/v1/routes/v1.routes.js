@@ -4,10 +4,12 @@ import authRoutes from "./v1.auth.routes.js";
 import reservaRoutes from "./v1.reserva.routes.js";
 import categoriaRoutes from "./v1.categoria.routes.js";
 import publicRoutes from "./public.routes.js";
+import imageRoutes from "./image.routes.js";
 
 
 const v1Routes = Router()
 
+v1Routes.use("/images", imageRoutes);
 v1Routes.use("/public", publicRoutes);
 v1Routes.use("/auth", authRoutes);
 v1Routes.use("/users", userRoutes)

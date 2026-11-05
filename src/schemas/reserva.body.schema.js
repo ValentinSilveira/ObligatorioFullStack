@@ -65,6 +65,8 @@ export const reservaBodySchema = joi.object({
     nombreMascota: joi.string().min(1).max(50).required(),
     edadMascota: joi.number().integer().min(0).max(100).required(),
     motivo: joi.string().min(1).max(200).required(),
+    imageUrl: joi.string().uri().allow("").optional(),
+    imagePublicId: joi.string().allow("").optional()
 }).custom(crearValidadorFechaHoraFutura("fecha", "hora"));
 
 // esquema de validación para el cuerpo de la solicitud de la reprogramación de reserva
