@@ -215,3 +215,10 @@ export const obtenerReservaPorId = async (idReserva, clienteId) => {
     asegurarPropietario(reserva , clienteId);
     return reserva;
 };
+
+// Datos para el informe de reservas por categoría
+export const getReservasParaInforme = async () => {
+  return await Reserva.find()
+    .select("categoriaId -_id")
+    .populate("categoriaId", "nombre -_id");
+};
