@@ -13,7 +13,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'DELETE', 'PATCH']
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: "4mb" }));
 
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Servidor disponible" })

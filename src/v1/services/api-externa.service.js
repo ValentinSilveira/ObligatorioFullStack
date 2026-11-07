@@ -1,4 +1,5 @@
 import axios from "axios";
+import { AppError } from "../../utils/appError.js";
 
 //Genera un QR con el id de reserva para presentar en recepcion con goQR API
 const urlExternaBase = "https://api.qrserver.com/v1/create-qr-code/";

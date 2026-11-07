@@ -53,9 +53,9 @@ export const eliminarCategoria = async (id) => {
     let categoriaEliminada;
     try {
         await session.withTransaction(async () => {
-            const enUso = await Reserva.exists({ categoriaId: id }).session(session);
-            if (enUso) {
-                throw new AppError(409, "No se puede eliminar la categoría porque hay reservas que la utilizan.");
+            const tieneReservas = await Reserva.exists({ categoriaId: id }).session(session);
+            if (tieneReservas) {
+                throw new AppError(409, "No se puede eliminar la categoría porque tiene reservas asociadas.");
             }
 
             const categoria = await Categoria.findByIdAndDelete(id, { session });

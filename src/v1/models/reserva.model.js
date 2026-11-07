@@ -44,6 +44,8 @@ const reservaSchema = new mongoose.Schema({
         enum: ["pendiente", "confirmada"],
         default: "confirmada",
     },
+    imageUrl: { type: String, required: false },
+    imagePublicId: { type: String, required: false }
 });
 
 // Índice único compuesto para fecha y hora: al cancelar/borrar una reserva se elimina

@@ -1,4 +1,20 @@
-import { crearReserva, getAllReservas, cancelarReserva, reprogramarReserva, obtenerReservaPorId, getReservasByUserServicePaginated } from "../services/reserva.service.js";
+import {
+  crearReserva,
+  getAllReservas,
+  cancelarReserva,
+  reprogramarReserva,
+  obtenerReservaPorId,
+  getReservasByUserServicePaginated,
+  getReservasDelDia,
+  getReservasParaInforme,
+} from "../services/reserva.service.js";
+
+// listamos todas las reservas de un día (solo admin)
+export const agendaDelDiaController = async (req, res) => {
+    const { fecha } = res.locals.validatedQuery;
+    const reservas = await getReservasDelDia(fecha);
+    return res.status(200).json(reservas);
+};
 
 // Conectamos http con logica de negocio
 
@@ -23,14 +39,35 @@ export const listarReservas = async (req, res) => {
 
 // reservamos un turno para el usuario autenticado
 export const reservarTurno = async (req, res) => {
-    const { categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo } = req.body;
+  const {
+    categoriaId,
+    fecha,
+    hora,
+    mascota,
+    nombreMascota,
+    edadMascota,
+    motivo,
+    imageUrl,
+    imagePublicId,
+  } = req.body;
 
-    const reservaExitosa = await crearReserva(req.user.id, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo);
+  const reservaExitosa = await crearReserva(
+    req.user.id,
+    categoriaId,
+    fecha,
+    hora,
+    mascota,
+    nombreMascota,
+    edadMascota,
+    motivo,
+    imageUrl,
+    imagePublicId,
+  );
 
-    return res.status(201).json({
-        message: "¡Turno reservado con éxito!",
-        reserva: reservaExitosa
-    });
+  return res.status(201).json({
+    message: "¡Turno reservado con éxito!",
+    reserva: reservaExitosa,
+  });
 };
 
 // cancelamos una reserva del usuario autenticado
@@ -43,15 +80,15 @@ export const cancelarReservaController = async (req, res) => {
     });
 };
 
-// reprogramamos una reserva del usuario autenticado
+// editamos una reserva del usuario autenticado
 export const reprogramarReservaController = async (req, res) => {
     const { idReserva } = req.params;
-    const { nuevaFecha, nuevaHora } = req.body;
+    const { nuevaFecha, nuevaHora, ...cambios } = req.body;
 
-    const reserva = await reprogramarReserva(idReserva, req.user.id, nuevaFecha, nuevaHora);
+    const reserva = await reprogramarReserva(idReserva, req.user.id, nuevaFecha, nuevaHora, cambios);
 
     return res.status(200).json({
-        message: "Reserva reprogramada con éxito.",
+        message: "Reserva actualizada con éxito.",
         reserva
     });
 };
@@ -65,4 +102,11 @@ export const obtenerReservaController = async (req, res) => {
     );
 
     return res.status(200).json(reserva);
+};
+
+// Informe para el administrador
+export const informeReservasPorCategoriaController = async (req, res) => {
+  const reservas = await getReservasParaInforme();
+
+  return res.status(200).json(reservas);
 };

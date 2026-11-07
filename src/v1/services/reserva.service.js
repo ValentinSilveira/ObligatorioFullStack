@@ -5,6 +5,7 @@ import User from "../models/user.model.js";
 import AgendaDia from "../models/agenda-dia.model.js";
 import { AppError } from "../../utils/appError.js";
 import { embellishText } from "./embellish-text.service.js"
+import { deleteImage } from "./image.service.js";
 
 // service se encarga de la logica de negocio, validaciones y reglas de negocio.
 
@@ -109,9 +110,10 @@ const asegurarLimiteDePlan = async (clienteId, fecha, session, idReservaExcluida
 };
 
 // Función para crear una nueva reserva
-export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo) => {
-    // La llamada a la API externa va fuera de la transacción para no mantenerla
+export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota, nombreMascota, edadMascota, motivo, imageUrl, imagePublicId) => {
+    // La llamada a la IA va fuera de la transacción para no mantenerla
     // abierta ni repetir la llamada si la transacción se reintenta.
+    // embellishText nunca rechaza (si falla devuelve el texto original).
     const motivoProfesional = await embellishText(
         motivo,
         "profesional veterinario"
@@ -136,7 +138,9 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
                 edadMascota,
                 motivo,
                 motivoProfesional,
-                estado: "pendiente"
+                estado: "confirmada",
+                imageUrl: imageUrl || undefined,
+                imagePublicId: imagePublicId || undefined,
             }], { session });
             nuevaReserva = reserva;
         });
@@ -149,6 +153,14 @@ export const crearReserva = async (clienteId, categoriaId, fecha, hora, mascota,
     } finally {
         await session.endSession();
     }
+};
+
+// Función para obtener todas las reservas de un día (agenda del admin), ordenadas por hora
+export const getReservasDelDia = async (fecha) => {
+    return await Reserva.find({ fecha })
+        .sort({ hora: 1 })
+        .populate("cliente", "name username -_id")
+        .populate("categoriaId", "nombre -_id");
 };
 
 // Función para obtener todas las reservas de un cliente
@@ -198,10 +210,24 @@ export const cancelarReserva = async (idReserva, clienteId) => {
     return reserva;
 };
 
-// Función para reprogramar una reserva
-export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora) => {
+// Función para editar una reserva: fecha y hora siempre, y los demás campos que vengan en "cambios"
+// (nombreMascota, categoriaId, mascota, edadMascota, motivo, imageUrl + imagePublicId)
+export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora, cambios = {}) => {
+    const { nombreMascota, categoriaId, mascota, edadMascota, motivo, imageUrl, imagePublicId } = cambios;
+
+    // si cambia el motivo, la IA vuelve a generar el motivo profesional para que coincidan.
+    // Se calcula antes de la transacción para no mantenerla abierta ni repetir la llamada si se reintenta.
+    let motivoProfesional;
+    if (motivo !== undefined) {
+        const actual = await Reserva.findById(idReserva).select("motivo");
+        if (actual && motivo !== actual.motivo) {
+            motivoProfesional = await embellishText(motivo, "profesional veterinario");
+        }
+    }
+
     const session = await mongoose.startSession();
-    let reservaReprogramada;
+    let reservaEditada;
+    let imagePublicIdAnterior;
     try {
         await session.withTransaction(async () => {
             // verificamos que exista la reserva
@@ -211,18 +237,31 @@ export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nueva
             }
             // verificamos que el cliente sea el propietario de la reserva
             asegurarPropietario(reserva, clienteId);
+            if (categoriaId !== undefined) {
+                await asegurarCategoriaExistente(categoriaId, session);
+            }
             await bloquearDia(nuevaFecha, session);
             await asegurarDistanciaMinima(nuevaFecha, nuevaHora, session, idReserva);
             // Si la reprogramación cambia de año calendario, se vuelve a validar el cupo del plan
             if (nuevaFecha.getUTCFullYear() !== reserva.fecha.getUTCFullYear()) {
                 await asegurarLimiteDePlan(clienteId, nuevaFecha, session, idReserva);
             }
+
+            // se guarda la imagen anterior para borrarla de Cloudinary después de guardar la nueva
+            imagePublicIdAnterior = imageUrl !== undefined ? reserva.imagePublicId : undefined;
+
             reserva.fecha = nuevaFecha;
             reserva.hora = nuevaHora;
+            const camposOpcionales = { nombreMascota, categoriaId, mascota, edadMascota, motivo, motivoProfesional, imageUrl, imagePublicId };
+            for (const [campo, valor] of Object.entries(camposOpcionales)) {
+                if (valor !== undefined) {
+                    reserva[campo] = valor;
+                }
+            }
+
             await reserva.save({ session });
-            reservaReprogramada = reserva;
+            reservaEditada = reserva;
         });
-        return reservaReprogramada;
     } catch (error) {
         if (error.code === 11000) {
             throw new AppError(409, "Ese horario ya está ocupado por otra reserva.");
@@ -231,10 +270,25 @@ export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nueva
     } finally {
         await session.endSession();
     }
+
+    // si falla el borrado de la imagen vieja no se corta la edición, la reserva ya quedó guardada
+    if (imagePublicIdAnterior && imagePublicIdAnterior !== imagePublicId) {
+        try {
+            await deleteImage(imagePublicIdAnterior);
+        } catch (error) {
+            console.error("No se pudo borrar la imagen anterior de Cloudinary:", error.message);
+        }
+    }
+
+    // se devuelve con el nombre de la categoría, igual que el detalle
+    await reservaEditada.populate("categoriaId", "nombre");
+    return reservaEditada;
 };
 
 export const obtenerReservaPorId = async (idReserva, clienteId) => {
-    const reserva = await Reserva.findById(idReserva);
+    // se trae el nombre de la categoría y su id (el front lo usa para preseleccionarla al editar)
+    const reserva = await Reserva.findById(idReserva)
+        .populate("categoriaId", "nombre");
 
     if (!reserva) {
         throw new AppError(404, "La reserva no existe");
@@ -242,4 +296,11 @@ export const obtenerReservaPorId = async (idReserva, clienteId) => {
 
     asegurarPropietario(reserva, clienteId);
     return reserva;
+};
+
+// Datos para el informe de reservas por categoría
+export const getReservasParaInforme = async () => {
+  return await Reserva.find()
+    .select("categoriaId -_id")
+    .populate("categoriaId", "nombre -_id");
 };

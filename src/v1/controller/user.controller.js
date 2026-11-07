@@ -1,4 +1,30 @@
-import { deleteUserService, updatePlanService, updateUserService, getUserByIdService } from "../services/user.services.js";
+import { deleteCuentaService, updatePlanService, updateUserService, getUserByIdService, getClientesService, updateClienteService, deleteClienteService } from "../services/user.services.js";
+
+// listamos todos los clientes (solo admin)
+export const listarClientesController = async (req, res) => {
+    const clientes = await getClientesService();
+    return res.status(200).json(clientes);
+};
+
+// editamos nombre, username y email de un cliente (solo admin)
+export const actualizarClienteController = async (req, res) => {
+    const { idCliente } = req.params;
+    const cliente = await updateClienteService(idCliente, req.body);
+    return res.status(200).json({
+        message: "Cliente actualizado con éxito.",
+        cliente
+    });
+};
+
+// eliminamos un cliente y sus reservas (solo admin)
+export const eliminarClienteController = async (req, res) => {
+    const { idCliente } = req.params;
+    const cliente = await deleteClienteService(idCliente);
+    return res.status(200).json({
+        message: "Cliente eliminado con éxito.",
+        cliente
+    });
+};
 
 export const getUserController = async (req, res) => {
     const user = await getUserByIdService(req.user.id);
@@ -12,7 +38,7 @@ export const updateUserController = async (req, res) => {
 };
 
 export const deleteUserController = async (req, res) => {
-    await deleteUserService(req.user.id);
+    await deleteCuentaService(req.user.id);
     return res.status(204).send();
 };
 

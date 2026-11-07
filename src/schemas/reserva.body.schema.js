@@ -52,7 +52,7 @@ const parsearFechaDDMMAAAA = (value, helpers) => {
 };
 
 // Defino un esquema de validación para la fecha en formato DD-MM-AAAA
-const fechaSchema = joi.string()
+export const fechaSchema = joi.string()
     .pattern(/^\d{2}-\d{2}-\d{4}$/)
     .messages({ "string.pattern.base": "{{#label}} debe tener el formato DD-MM-AAAA" })
     .custom(parsearFechaDDMMAAAA)
@@ -67,10 +67,22 @@ export const reservaBodySchema = joi.object({
     nombreMascota: joi.string().min(1).max(50).required(),
     edadMascota: joi.number().integer().min(0).max(100).required(),
     motivo: joi.string().min(1).max(200).required(),
+    imageUrl: joi.string().uri().allow("").optional(),
+    imagePublicId: joi.string().allow("").optional()
 }).custom(crearValidadorFechaHoraFutura("fecha", "hora"));
 
-// esquema de validación para el cuerpo de la solicitud de la reprogramación de reserva
+// esquema de validación para el cuerpo de la solicitud de edición de reserva
+// fecha y hora son obligatorias; el resto es opcional y solo se actualiza si viene (mismas reglas que al crear)
+// el estado y el motivo profesional no se editan
 export const reprogramarBodySchema = joi.object({
     nuevaFecha: fechaSchema,
     nuevaHora: horaSchema,
-}).custom(crearValidadorFechaHoraFutura("nuevaFecha", "nuevaHora"));
+    nombreMascota: joi.string().trim().min(1).max(50),
+    categoriaId: joi.string().hex().length(24),
+    mascota: joi.string().trim().min(1).max(50),
+    edadMascota: joi.number().integer().min(0).max(100),
+    motivo: joi.string().trim().min(1).max(200),
+    imageUrl: joi.string().uri(),
+    imagePublicId: joi.string(),
+}).and("imageUrl", "imagePublicId")
+    .custom(crearValidadorFechaHoraFutura("nuevaFecha", "nuevaHora"));
