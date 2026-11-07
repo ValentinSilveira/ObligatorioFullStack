@@ -1,4 +1,5 @@
 import Categoria from "../models/categoria.model.js";
+import Reserva from "../models/reserva.model.js";
 import { AppError } from "../../utils/appError.js";
 
 export const crearCategoria = async (nombre, descripcion) => {
@@ -43,7 +44,14 @@ export const updateCategoria = async (id, data) => {
     }
 };
 
+// no se borra si alguna reserva la usa, para que no queden reservas apuntando a una categoría que no existe
 export const eliminarCategoria = async (id) => {
+    const tieneReservas = await Reserva.exists({ categoriaId: id });
+
+    if (tieneReservas) {
+        throw new AppError(409, "No se puede eliminar la categoría porque tiene reservas asociadas.");
+    }
+
     const categoria = await Categoria.findByIdAndDelete(id);
 
     if (!categoria) {

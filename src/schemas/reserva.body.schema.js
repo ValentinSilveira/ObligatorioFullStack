@@ -69,10 +69,18 @@ export const reservaBodySchema = joi.object({
     imagePublicId: joi.string().allow("").optional()
 }).custom(crearValidadorFechaHoraFutura("fecha", "hora"));
 
-// esquema de validación para el cuerpo de la solicitud de la reprogramación de reserva
-// nombreMascota es opcional: si viene, también se actualiza (mismas reglas que al crear)
+// esquema de validación para el cuerpo de la solicitud de edición de reserva
+// fecha y hora son obligatorias; el resto es opcional y solo se actualiza si viene (mismas reglas que al crear)
+// el estado y el motivo profesional no se editan
 export const reprogramarBodySchema = joi.object({
     nuevaFecha: fechaSchema,
     nuevaHora: horaSchema,
     nombreMascota: joi.string().trim().min(1).max(50),
-}).custom(crearValidadorFechaHoraFutura("nuevaFecha", "nuevaHora"));
+    categoriaId: joi.string().hex().length(24),
+    mascota: joi.string().trim().min(1).max(50),
+    edadMascota: joi.number().integer().min(0).max(100),
+    motivo: joi.string().trim().min(1).max(200),
+    imageUrl: joi.string().uri(),
+    imagePublicId: joi.string(),
+}).and("imageUrl", "imagePublicId")
+    .custom(crearValidadorFechaHoraFutura("nuevaFecha", "nuevaHora"));

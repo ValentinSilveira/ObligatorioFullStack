@@ -14,7 +14,6 @@ userRoutes.use(authMiddleware);
 userRoutes.get("/", getUserController);
 userRoutes.patch("/", validateRequest(updateUserBodySchema, "body"), updateUserController);
 userRoutes.delete("/", deleteUserController);
-//TODO: BORRAR QUE NO USAMOS EL CRUD DE USER
 
 userRoutes.patch("/plan", validateRequest(planBodySchema, "body"), updatePlanController);
 
