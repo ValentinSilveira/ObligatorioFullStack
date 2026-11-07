@@ -129,6 +129,13 @@ export const getReservasDelDia = async (fecha) => {
         .populate("categoriaId", "nombre -_id");
 };
 
+// Horas ocupadas de un día (para que el cliente vea qué horarios quedan libres).
+// Solo devuelve las horas, sin datos de las reservas de otros clientes
+export const getHorariosOcupados = async (fecha) => {
+    const reservas = await Reserva.find({ fecha }).select("hora").sort({ hora: 1 });
+    return reservas.map((reserva) => reserva.hora);
+};
+
 // Función para obtener todas las reservas de un cliente
 export const getAllReservas = async (clienteId) => {
     return await Reserva.find({ cliente: clienteId })
