@@ -6,6 +6,7 @@ import AgendaDia from "../models/agenda-dia.model.js";
 import { AppError } from "../../utils/appError.js";
 import { embellishText } from "./embellish-text.service.js"
 import { deleteImage } from "./image.service.js";
+import { deleteImage as deleteCloudinaryImage,} from "./image.service.js";
 
 // service se encarga de la logica de negocio, validaciones y reglas de negocio.
 
@@ -213,6 +214,14 @@ export const cancelarReserva = async (idReserva, clienteId) => {
     }
     // verificamos que el cliente sea el propietario de la reserva
     asegurarPropietario(reserva, clienteId);
+    
+    // Primero se elimina la imagen.
+    // Si Cloudinary falla, la reserva permanece y el usuario puede volver a intentar.
+    if (reserva.imagePublicId) {
+        await deleteCloudinaryImage(
+            reserva.imagePublicId,
+        );
+    };
     await Reserva.findByIdAndDelete(idReserva);
     return reserva;
 };
