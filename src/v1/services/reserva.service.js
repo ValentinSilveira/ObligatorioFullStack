@@ -3,6 +3,7 @@ import Categoria from "../models/categoria.model.js";
 import { AppError } from "../../utils/appError.js";
 import { embellishText } from "./embellish-text.service.js"
 import { getUserByIdService } from "./user.services.js";
+import { deleteImage } from "./image.service.js";
 
 const MARGEN_ENTRE_RESERVAS_MS = 30 * 60 * 1000;
 const LIMITE_RESERVAS_ANUALES_PLUS = 4;
@@ -175,8 +176,11 @@ export const cancelarReserva = async (idReserva, clienteId) => {
     return reserva;
 };
 
-// Función para reprogramar una reserva (y opcionalmente cambiar el nombre de la mascota)
-export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora, nombreMascota) => {
+// Función para editar una reserva: fecha y hora siempre, y los demás campos que vengan en "cambios"
+// (nombreMascota, categoriaId, mascota, edadMascota, motivo, imageUrl + imagePublicId)
+export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nuevaHora, cambios = {}) => {
+    const { nombreMascota, categoriaId, mascota, edadMascota, motivo, imageUrl, imagePublicId } = cambios;
+
     // verificamos que exista la reserva
     const reserva = await Reserva.findById(idReserva);
     if (!reserva) {
@@ -184,16 +188,32 @@ export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nueva
     }
     // verificamos que el cliente sea el propietario de la reserva
     asegurarPropietario(reserva, clienteId);
+    if (categoriaId !== undefined) {
+        await asegurarCategoriaExistente(categoriaId);
+    }
     await asegurarDistanciaMinima(nuevaFecha, nuevaHora, idReserva);
     // Si la reprogramación cambia de año calendario, se vuelve a validar el cupo del plan
     if (nuevaFecha.getUTCFullYear() !== reserva.fecha.getUTCFullYear()) {
         await asegurarLimiteDePlan(clienteId, nuevaFecha, idReserva);
     }
+
+    // si cambia el motivo, la IA vuelve a generar el motivo profesional para que coincidan
+    if (motivo !== undefined && motivo !== reserva.motivo) {
+        reserva.motivoProfesional = await embellishText(motivo, "profesional veterinario");
+    }
+
+    // se guarda la imagen anterior para borrarla de Cloudinary después de guardar la nueva
+    const imagePublicIdAnterior = imageUrl !== undefined ? reserva.imagePublicId : undefined;
+
     reserva.fecha = nuevaFecha;
     reserva.hora = nuevaHora;
-    if (nombreMascota !== undefined) {
-        reserva.nombreMascota = nombreMascota;
+    const camposOpcionales = { nombreMascota, categoriaId, mascota, edadMascota, motivo, imageUrl, imagePublicId };
+    for (const [campo, valor] of Object.entries(camposOpcionales)) {
+        if (valor !== undefined) {
+            reserva[campo] = valor;
+        }
     }
+
     try {
         await reserva.save();
     } catch (error) {
@@ -202,11 +222,25 @@ export const reprogramarReserva = async (idReserva, clienteId, nuevaFecha, nueva
         }
         throw error;
     }
+
+    // si falla el borrado de la imagen vieja no se corta la edición, la reserva ya quedó guardada
+    if (imagePublicIdAnterior && imagePublicIdAnterior !== imagePublicId) {
+        try {
+            await deleteImage(imagePublicIdAnterior);
+        } catch (error) {
+            console.error("No se pudo borrar la imagen anterior de Cloudinary:", error.message);
+        }
+    }
+
+    // se devuelve con el nombre de la categoría, igual que el detalle
+    await reserva.populate("categoriaId", "nombre");
     return reserva;
 };
 
 export const obtenerReservaPorId = async (idReserva, clienteId) => {
-    const reserva = await Reserva.findById(idReserva);
+    // se trae el nombre de la categoría y su id (el front lo usa para preseleccionarla al editar)
+    const reserva = await Reserva.findById(idReserva)
+        .populate("categoriaId", "nombre");
 
     if(!reserva){
         throw new AppError(404, "La reserva no existe");

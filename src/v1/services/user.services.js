@@ -23,10 +23,16 @@ export const updateClienteService = async (idCliente, data) => {
     return await updateUserService(idCliente, data);
 };
 
-// el admin borra un cliente y sus reservas, para que no queden reservas sin cliente en la agenda
+// el admin borra un cliente: no se permite si tiene reservas, para que no queden reservas sin cliente en la agenda
 export const deleteClienteService = async (idCliente) => {
     await asegurarCliente(idCliente);
-    await Reserva.deleteMany({ cliente: idCliente });
+
+    const tieneReservas = await Reserva.exists({ cliente: idCliente });
+
+    if (tieneReservas) {
+        throw new AppError(409, "No se puede eliminar el cliente porque tiene reservas.");
+    }
+
     return await deleteUserService(idCliente);
 };
 
@@ -56,6 +62,17 @@ export const deleteUserService = async (id) => {
     }
 
     return user;
+};
+
+// el usuario borra su propia cuenta: no se permite si tiene reservas, primero tiene que cancelarlas
+export const deleteCuentaService = async (id) => {
+    const tieneReservas = await Reserva.exists({ cliente: id });
+
+    if (tieneReservas) {
+        throw new AppError(409, "No podés eliminar tu cuenta porque tenés reservas. Cancelalas primero.");
+    }
+
+    return await deleteUserService(id);
 };
 
 export const updateUserService = async (id, data) => {
