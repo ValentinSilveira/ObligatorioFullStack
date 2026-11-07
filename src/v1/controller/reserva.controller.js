@@ -7,6 +7,7 @@ import {
   getReservasByUserServicePaginated,
   getReservasDelDia,
   getReservasParaInforme,
+  getHorariosOcupados,
 } from "../services/reserva.service.js";
 
 // listamos todas las reservas de un día (solo admin)
@@ -14,6 +15,13 @@ export const agendaDelDiaController = async (req, res) => {
     const { fecha } = res.locals.validatedQuery;
     const reservas = await getReservasDelDia(fecha);
     return res.status(200).json(reservas);
+};
+
+// devolvemos las horas ocupadas de un día (cualquier usuario logueado), ej: ["09:00", "10:30"]
+export const horariosOcupadosController = async (req, res) => {
+    const { fecha } = res.locals.validatedQuery;
+    const horas = await getHorariosOcupados(fecha);
+    return res.status(200).json(horas);
 };
 
 // Conectamos http con logica de negocio
