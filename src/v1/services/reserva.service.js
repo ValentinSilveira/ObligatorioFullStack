@@ -177,12 +177,20 @@ export const getAllReservas = async (clienteId) => {
         .populate("categoriaId", "nombre -_id");
 };
 
-// Función para obtener todas las reservas de un cliente paginadas
+// Función para obtener todas las reservas de un cliente paginadas (las más nuevas primero).
+// El filtro por mascota se aplica en Mongo antes de contar y limitar, así el total y las páginas son correctos
 export const getReservasByUserServicePaginated = async (
     cliente,
-    { pagina, limite }
+    { pagina, limite, mascota }
 ) => {
     const filtro = { cliente };
+
+    // busca el texto dentro del nombre de la mascota, sin importar mayúsculas;
+    // se escapan los caracteres especiales para que se busque el texto tal cual y no como expresión regular
+    if (mascota) {
+        const textoEscapado = mascota.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        filtro.nombreMascota = { $regex: textoEscapado, $options: "i" };
+    }
 
     const [reservas, total] = await Promise.all(
         [
@@ -191,7 +199,7 @@ export const getReservasByUserServicePaginated = async (
                 .skip((pagina - 1) * limite)
                 .limit(limite)
                 .populate("cliente", "name email")
-                .populate("categoriaId", "nombrel"),
+                .populate("categoriaId", "nombre"),
             Reserva.countDocuments(filtro)
         ]
     );

@@ -28,7 +28,7 @@ export const horariosOcupadosController = async (req, res) => {
 
 // listamos las reservas del usuario
 export const listarReservas = async (req, res) => {
-    const { pagina, limite } = res.locals.validatedQuery;
+    const { pagina, limite, mascota } = res.locals.validatedQuery;
 
     // Si la URL no indica paginación, mantenemos el formato original: un array.
     if (pagina === undefined && limite === undefined) {
@@ -39,6 +39,7 @@ export const listarReservas = async (req, res) => {
     const resultado = await getReservasByUserServicePaginated(req.user.id, {
         pagina: pagina ?? 1,
         limite: limite ?? 20,
+        mascota,
     });
 
 
