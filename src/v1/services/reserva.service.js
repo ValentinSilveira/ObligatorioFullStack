@@ -322,9 +322,10 @@ export const obtenerReservaPorId = async (idReserva, clienteId) => {
     return reserva;
 };
 
-// Datos para el informe de reservas por categoría
+// Datos para el informe de reservas por categoría.
+// Incluye el id del cliente para que el admin pueda ver el gráfico de uno o varios clientes
 export const getReservasParaInforme = async () => {
   return await Reserva.find()
-    .select("categoriaId -_id")
+    .select("categoriaId cliente -_id")
     .populate("categoriaId", "nombre -_id");
 };
